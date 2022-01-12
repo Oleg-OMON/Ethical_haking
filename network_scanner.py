@@ -1,4 +1,12 @@
 import scapy.all as scapy
+import argparse
+
+
+def get_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-t', '-target', dest='target', help='Target IP / IP range')
+    options = parser.parse_args()
+    return options
 
 
 def scan(ip):
@@ -6,10 +14,18 @@ def scan(ip):
     broadcast = scapy.Ether(dst='ff:ff:ff:ff:ff:ff')
     arp_request_broadcast = broadcast / arp_request
     answered_list = scapy.src(arp_request_broadcast, timeout=1)[0]
+
+    clients_list = []
     for item in answered_list:
-        print(item[1].psrc)
-        print(item[1].hwsrc)
-        print('#############################')
+        client_dict = {'ip': item[1].psrc, 'mac': item[1].hwsrc}
+        clients_list.append(client_dict)
+    return clients_list
 
 
-scan('00.0.0.0/00')
+def print_result(clients_list):
+    for client in clients_list:
+        print(client)
+
+
+scan_result = scan('00.0.0.0/00')
+print_result(scan_result)
