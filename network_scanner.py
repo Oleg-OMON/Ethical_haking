@@ -15,6 +15,8 @@ def scan(ip):
     arp_request_broadcast = broadcast / arp_request
     answered_list = scapy.src(arp_request_broadcast, timeout=1)[0]
 
+    router_mac = answered_list[0][1].hwsrc
+
     clients_list = []
     for item in answered_list:
         client_dict = {'ip': item[1].psrc, 'mac': item[1].hwsrc}
